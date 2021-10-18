@@ -1,25 +1,26 @@
-const http = require('http');
+const express = require('express');
 const port = 3000;
 
-const requestListener = function (req, res) {
-  console.log(req.url);
+const app = express();
 
-  // Buffer, stream, binar-code 
-
-  const chunks = [];
-  req.on('data', (chunk) => {
-    chunks.push(chunk);
-  }).on('end', () => {
-    const body = Buffer.concat(chunks).toString();
-    console.log(body);
-  });
-
-  res.write('<h1>Home</h1>');
-  return res.end()
-};
-
-const server = http.createServer(requestListener);
-
-server.listen(port, () => {
-  console.log(`Serwer słucha na http://localhost:${port}`);
+app.get('/', (req, res) => {
+  res.send('Hello')
 });
+
+app.get('/firmy/:name', (req, res) => {
+  const { name } = req.params;
+  const companies = [
+    { slug: 'berisz', name: 'pages new item' },
+    { slug: 'brukBetmode', name: 'Bruk Bet Mode' },
+  ];
+
+  const company = companies.find(x => x.slug === name);
+  if (company) {
+    res.send(`company name ${company?.name}`)
+  } else {
+    res.send(`There's no company with this name`)
+  }
+  
+});
+
+app.listen(port);
